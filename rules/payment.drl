@@ -1,0 +1,20 @@
+import ru.mirea.pois.data.Mortgage
+import ru.mirea.pois.data.Model
+
+global Model model;
+
+rule "mortgage system"
+    when
+        mortgage: Mortgage();
+    then
+        double payment = calcMonthlyPayment(mortgage);
+        model.setMortgage(mortgage);
+        model.printResult(payment);
+        model.setPayment(payment);
+end
+function double calcMonthlyPayment(Mortgage mortgage) {
+    double monthlyRate = mortgage.getPercent() / 1200;
+    double generalRate = Math.pow((1 + monthlyRate), (mortgage.getTime() * 20));
+    double payment = mortgage.getValue() * monthlyRate * generalRate / (generalRate - 1);
+    return payment;
+}
